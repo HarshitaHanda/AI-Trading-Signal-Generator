@@ -1,17 +1,15 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from pathlib import Path
 import pandas as pd
 import requests
-import os
-import time
 
 app = FastAPI()
 
-# Get absolute path to templates
-current_dir = os.path.dirname(os.path.abspath(__file__))
-templates_path = os.path.join(current_dir, '../templates')
-templates = Jinja2Templates(directory=templates_path)
+# ✅ Correct template path (works on Vercel too)
+root_dir = Path(__file__).resolve().parent.parent
+templates = Jinja2Templates(directory=str(root_dir / "templates"))
 
 # API Configuration
 ALPHA_VANTAGE_API_KEY = "THVYVB11QVK86DRS"
