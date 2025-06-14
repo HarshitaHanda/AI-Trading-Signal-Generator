@@ -1,14 +1,18 @@
 {
   "builds": [
     {
-      "src": "main.py",
+      "src": "api/main.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "main.py"
+      "src": "/",
+      "dest": "api/main.py"
+    },
+    {
+      "src": "/templates/(.*)",
+      "dest": "templates/$1"
     }
   ]
 }
