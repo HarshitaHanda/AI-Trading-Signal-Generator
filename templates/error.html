@@ -2,10 +2,22 @@
 <html>
 <head>
     <title>Error</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 40px; }
+        .error-box { background: #ffebee; border: 1px solid #f44336; padding: 20px; border-radius: 5px; }
+    </style>
 </head>
 <body>
     <h1>⚠️ Application Error</h1>
-    <p>{{ error }}</p>
-    <p>Please try again later or contact support.</p>
+    <div class="error-box">
+        <p><strong>Error Message:</strong> {{ error }}</p>
+    </div>
+    <h2>Possible Solutions:</h2>
+    <ul>
+        <li>Try a different stock ticker (e.g., MSFT, AAPL, GOOG)</li>
+        <li>Refresh the page after 1-2 minutes</li>
+        <li>Check back during market hours (9:30 AM - 4:00 PM EST)</li>
+    </ul>
+    <p>If the problem persists, please contact support.</p>
 </body>
 </html>
