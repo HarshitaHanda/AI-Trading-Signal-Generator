@@ -4,30 +4,90 @@
     <title>AI Trading Signal Generator</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .container { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
-        .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .signal {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .positive { color: #4CAF50; }
+        .negative { color: #F44336; }
+        .neutral { color: #9E9E9E; }
     </style>
 </head>
 <body>
-    <h1>AI Trading Signal Generator</h1>
-    
+    <div class="header">
+        <h1>🚀 AI Trading Signal Generator</h1>
+        <p>Real-time market analysis | Algorithmic Signal Generation</p>
+    </div>
+
     <div class="container">
         <div class="card">
-            <h2>{{ ticker }} Summary</h2>
-            <p>Current Price: ${{ current_price | round(2) }}</p>
-            <p>RSI: {{ rsi | round(1) }}</p>
+            <h2>Trading Signal</h2>
+            <div class="signal {{ 'positive' if signal == 'BUY' else 'negative' if signal == 'SELL' else 'neutral' }}">
+                {{ signal }}
+            </div>
+            <p>{{ "Market neutral" if signal == 'HOLD' else "Opportunity detected" }}</p>
+            
+            <h2>Price Info</h2>
+            <p><strong>{{ ticker }}:</strong> ${{ current_price | round(2) }}</p>
+            <p>Change: 
+                {% set change = ((current_price - prev_price)/prev_price)*100 %}
+                <span style="color: {% if change > 0 %}#4CAF50{% else %}#F44336{% endif %}">
+                    {{ change | round(2) }}%
+                </span>
+            </p>
+            
+            <h2>Technical Indicators</h2>
+            <p><strong>RSI (14-period):</strong> {{ rsi | round(1) }}</p>
+            <div style="background: #eee; border-radius: 5px; height: 10px;">
+                <div style="background: 
+                    {% if rsi < 30 %}#4CAF50
+                    {% elif rsi > 70 %}#F44336
+                    {% else %}#2196F3
+                    {% endif %}; 
+                    width: {{ rsi }}%; height: 100%; border-radius: 5px;">
+                </div>
+            </div>
+            <p>
+                {% if rsi < 30 %}(Oversold)
+                {% elif rsi > 70 %}(Overbought)
+                {% endif %}
+            </p>
         </div>
         
         <div class="card">
-            <h2>Price Chart</h2>
+            <h2>{{ ticker }} Price Movement</h2>
             <canvas id="priceChart" height="300"></canvas>
             
-            <h2>Market News</h2>
+            <h2>How It Works</h2>
+            <p>This system analyzes technical indicators to generate trading signals:</p>
             <ul>
-                {% for item in news %}
-                <li>{{ item }}</li>
-                {% endfor %}
+                <li><strong>BUY</strong>: When RSI < 30 (oversold)</li>
+                <li><strong>SELL</strong>: When RSI > 70 (overbought)</li>
+                <li><strong>HOLD</strong>: When between 30-70</li>
             </ul>
         </div>
     </div>
@@ -42,9 +102,27 @@
                 datasets: [{
                     label: 'Price ($)',
                     data: {{ prices | safe }},
-                    borderColor: 'blue',
+                    borderColor: '#2196F3',
+                    backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                    fill: true,
                     tension: 0.1
                 }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: false,
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    x: { 
+                        grid: { display: false }
+                    }
+                }
             }
         });
     </script>
